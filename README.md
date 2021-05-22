@@ -1,62 +1,59 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Tecnologias
+- MySQL 8 (https://www.mysql.com/)
+- PHP 7.4 (https://www.php.net/)
+- Laravel 8.0 (https://lumen.laravel.com/)
+- Docker (https://www.docker.com/)
+- Nginx (https://www.nginx.com/)
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Instalação
+Você pode rodar esse projeto usando o [Docker Compose](https://docs.docker.com/compose/install/).
+```sh
+$ docker-compose up  -d
+```
+A instalação das dependências, criação do .env, execução dos migrations e seed são feitas automaticamente. Você pode acompanhar pelo log se todos os passos foram executados corretamente digitando 
 
-## About Laravel
+```sh
+> $ docker logs desafio_laravel.php
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Agora você deve ser capaz de visitar a página da aplicação http://localhost/ e começar a usar o sistema
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Objetivo
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Está é uma API RESTFul que simula a transferência de dinheiro entre usuário e loja
 
-## Learning Laravel
+Regras:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Para ambos tipos de usuário, temos Nome Completo, CPF, e-mail e Senha. CPF/CNPJ e e-mails são únicos no sistema. Sendo assim, o sistema permite apenas um cadastro com o mesmo CPF ou endereço de e-mail.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Usuários podem enviar dinheiro (efetuar transferência) para lojistas e entre usuários. 
 
-## Laravel Sponsors
+- Lojistas **só recebem** transferências, não enviam dinheiro para ninguém.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+- Antes de finalizar a transferência, consultamos um serviço autorizador externo, esse serviço nos informa se a transferência foi autorizada ou não
+    ```json
+    {
+        "message" : "Autorizado"
+    }
+    ```
+    Mock para simular o serviço (https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6).
 
-### Premium Partners
+- A operação de transferência é uma transação, ou seja, revertida em qualquer caso de inconsistência, retornando o dinheiro para a carteira do usuário que enviou. 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
+- No recebimento de pagamento, o usuário ou lojista recebe uma notificação enviada por um serviço de terceiro e eventualmente este serviço pode estar indisponível/instável, por isso, usamos um serviço de fila para enviar essa notificação. 
+    ```json
+    {
+        "message" : "Enviado"
+    }
+    ```
+    Mock para simular o envio (https://run.mocky.io/v3/b19f7b9f-9cbf-4fc6-ad22-dc30601aec04). 
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Endpoints
+- `GET users`, listar todos os usuários
+- `GET users/{id}`, mostrar detalhe de usuário específico
+- `POST users`, cadastrar usuário
+- `PUT users/{id}`, atualizar usuário
+- `DELETE users/{id}`, deletar usuário
+- `POST transactions`, realizar uma transferência do saldo da conta de um usuário para outro
+ 
+### Para mais detalhe visite a documentação completa [API Documentation](https://github.com/cmparrela/user-transaction-laravel-api/wiki/API-Documentation)
