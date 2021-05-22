@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Validator;
 class UserService implements CrudServiceInterface
 {
     private $model;
+    private $accountService;
 
-    public function __construct(User $model)
+    public function __construct(User $model, AccountService $accountService)
     {
         $this->model = $model;
+        $this->accountService = $accountService;
     }
 
     public function getAll()
@@ -36,7 +38,12 @@ class UserService implements CrudServiceInterface
             $userData['type'] = 'shop';
         }
 
-        return $this->model->create($userData)->fresh();
+        $userCreated = $this->model->create($userData)->fresh();
+
+        $accountData = ['user_id' => $userCreated->id, 'balance' => 0];
+        $this->accountService->createNew($accountData);
+
+        return $userCreated;
     }
 
     public function findById($id)

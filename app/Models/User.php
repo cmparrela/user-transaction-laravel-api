@@ -18,9 +18,14 @@ class User extends Model
     protected $fillable = ['name', 'cpf_cnpj', 'email', 'password', 'type', 'updated_at', 'created_at', 'deleted_at'];
     protected $hidden = ['password'];
 
+    public function accounts()
+    {
+        return $this->HasOne(Account::class);
+    }
+
     public static function findTrashedById(int $id)
     {
         return self::onlyTrashed()->find($id);
     }
-
+    
 }
