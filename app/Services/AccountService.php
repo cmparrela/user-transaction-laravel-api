@@ -8,9 +8,9 @@ class AccountService
 {
     protected $model;
 
-    public function __construct(Account $model)
+    public function __construct(Account $account)
     {
-        $this->model = $model;
+        $this->model = $account;
     }
 
     public function createNew(array $attributes)
@@ -21,5 +21,17 @@ class AccountService
         ])->validate();
 
         return $this->model->create($attributes)->fresh();
+    }
+
+    public function deposit(Account $account, $amount)
+    {
+        $account->balance = $account->balance + $amount;
+        $account->save();
+    }
+
+    public function withdrawal(Account $account, $amount)
+    {
+        $account->balance = $account->balance - $amount;
+        $account->save();
     }
 }

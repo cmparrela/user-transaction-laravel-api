@@ -18,7 +18,7 @@ class User extends Model
     protected $fillable = ['name', 'cpf_cnpj', 'email', 'password', 'type', 'updated_at', 'created_at', 'deleted_at'];
     protected $hidden = ['password'];
 
-    public function accounts()
+    public function account()
     {
         return $this->HasOne(Account::class);
     }
@@ -27,5 +27,15 @@ class User extends Model
     {
         return self::onlyTrashed()->find($id);
     }
-    
+
+    public static function getByType(string $type)
+    {
+        return self::where('type', '=', $type)->get();
+    }
+
+    public static function findByType(string $type)
+    {
+        return self::where('type', '=', $type)->first();
+    }
+
 }

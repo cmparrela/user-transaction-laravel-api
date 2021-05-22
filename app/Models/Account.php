@@ -20,4 +20,14 @@ class Account extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function payerTransaction()
+    {
+        return $this->hasMany(Transaction::class, 'payer_id');
+    }
+
+    public function payeeTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'payee_id');
+    }
 }
