@@ -7,7 +7,7 @@ if [ ! -f .env ]; then
 fi
 
 if [ ! -f .env.testing ]; then
-    cp .env.testing.example .env
+    cp .env.testing.example .env.testing
 fi
 
 dockerize -wait tcp://desafio_laravel.database:3306 -timeout 25s
